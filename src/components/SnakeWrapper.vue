@@ -1,7 +1,3 @@
-<style lang="scss">
-
-</style>
-
 <template>
   <div
     class="flex flex-col items-center"
@@ -10,41 +6,28 @@
     <div
       class="relative flex flex-col border"
     >
-      <div
+      <start-overlay
         v-if="status === gameStatus.START"
-        class="absolute flex justify-center items-center w-full h-full bg-gray-500 bg-opacity-25"
-      >
-        <span
-          class="rounded-md	border border-green-500	px-3 py-2 text-white font-bold bg-green-500 cursor-pointer hover:border-green-400 hover:bg-green-400"
-          @click="startGame"
-        >Start game</span>
-      </div>
-      <div
-          v-else-if="status === gameStatus.GAME_OVER"
-          class="absolute flex flex-col justify-center items-center w-full h-full bg-gray-500 bg-opacity-25"
-      >
-        <h2 class="text-3xl font-bold mb-3">Game over!</h2>
-        <span
-            class="rounded-md	border border-green-500	px-3 py-2 text-white font-bold bg-green-500 cursor-pointer hover:border-green-400 hover:bg-green-400"
-            @click="startGame"
-        >Start new game</span>
-      </div>
+        @start-game="startGame"
+      />
+      <game-over-overlay
+        v-if="status === gameStatus.GAME_OVER"
+        @start-game="startGame"
+      />
       <div
         v-for="(row, rowIndex) in grid"
         :key="rowIndex"
         class="flex flex-row"
       >
         <div
-            v-for="(coordinate, columnIndex) in row"
-            :key="columnIndex"
-            class="border min-w-20 min-h-20"
-            :class="{
-              'bg-green-600	': containsSnake(coordinate),
-              'bg-red-600': containsApple(coordinate)
-            }"
-        >
-
-        </div>
+          v-for="(coordinate, columnIndex) in row"
+          :key="columnIndex"
+          class="border min-w-20 min-h-20"
+          :class="{
+            'bg-green-600	': containsSnake(coordinate),
+            'bg-red-600': containsApple(coordinate)
+          }"
+        />
       </div>
     </div>
   </div>
@@ -52,6 +35,8 @@
 
 <script>
 import Coordinate from "@/Coordinate";
+import GameOverOverlay from "@/components/GameOverOverlay";
+import StartOverlay from "@/components/StartOverlay";
 import { arrayOfLength, randomArrayElement } from "@/helpers";
 import { directions } from "@/constants/directions";
 import { gameStatus } from "@/constants/game-status";
@@ -59,17 +44,15 @@ import { gameStatus } from "@/constants/game-status";
 export default {
   name: 'SnakeWrapper',
   components: {
-
-  },
-  props: {
-
+    GameOverOverlay,
+    StartOverlay,
   },
   data() {
     return {
       boardWidth: 20,
       boardHeight: 20,
       snakeLength: 3,
-      speed: 500, // ms
+      speed: 200, // ms
       moveIntervalId: null,
       snake: [],
       apple: null,
@@ -99,9 +82,6 @@ export default {
     window.addEventListener('keydown', (e) => {
       this.handleKeyPress(e.key);
     });
-  },
-  mounted() {
-
   },
   methods: {
     move() {
@@ -180,6 +160,9 @@ export default {
         return;
       }
 
+      this.setDirection(direction);
+    },
+    setDirection(direction) {
       if (!this.isValidDirection(direction)) {
         return;
       }

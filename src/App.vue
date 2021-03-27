@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import SnakeWrapper from './components/SnakeWrapper.vue'
+import SnakeWrapper from '@/components/SnakeWrapper'
 
 export default {
   name: 'App',
