@@ -30,16 +30,17 @@
         >Start new game</span>
       </div>
       <div
-        v-for="(row, rowIndex) in matrix"
+        v-for="(row, rowIndex) in grid"
         :key="rowIndex"
         class="flex flex-row"
       >
         <div
-            v-for="(column, columnIndex) in row"
+            v-for="(coordinate, columnIndex) in row"
             :key="columnIndex"
             class="border min-w-20 min-h-20"
             :class="{
-              'bg-green-600	': containsSnake(columnIndex, rowIndex)
+              'bg-green-600	': containsSnake(coordinate),
+              'bg-red-600': containsApple(coordinate)
             }"
         >
 
@@ -51,7 +52,7 @@
 
 <script>
 import Coordinate from "@/Coordinate";
-import { arrayOfLength } from "@/helpers";
+import { arrayOfLength, randomArrayElement } from "@/helpers";
 import { directions } from "@/constants/directions";
 import { gameStatus } from "@/constants/game-status";
 
@@ -71,17 +72,28 @@ export default {
       speed: 500, // ms
       moveIntervalId: null,
       snake: [],
+      apple: null,
       direction: directions.RIGHT,
       status: gameStatus.START,
       gameStatus,
     };
   },
   computed: {
-    matrix() {
-      return arrayOfLength(this.boardHeight).map(() => {
-        return arrayOfLength(this.boardWidth);
+    grid() {
+      return arrayOfLength(this.boardHeight).map((y) => {
+        return arrayOfLength(this.boardWidth).map((x) => {
+          return new Coordinate(x, y);
+        });
       });
-    }
+    },
+    emptyCoordinates() {
+      return this.grid.flat().filter((gridCoordinate) => {
+        return !this.snake.some((snakeCoordinate) => {
+          return snakeCoordinate.x === gridCoordinate.x
+              && snakeCoordinate.y === gridCoordinate.y;
+        });
+      });
+    },
   },
   created() {
     window.addEventListener('keydown', (e) => {
@@ -95,22 +107,39 @@ export default {
     move() {
       const nextCoordinate = this.getNextCoordinate();
 
-      if (!this.coordinateIsOnGrid(nextCoordinate)) {
+      if (
+          !this.coordinateIsOnGrid(nextCoordinate)
+          || this.containsSnake(nextCoordinate)
+      ) {
         this.endGame();
         return;
       }
 
-      // Remove last element
-      this.snake.shift();
+      if (!this.containsApple(nextCoordinate)) {
+        // Remove last element
+        this.snake.shift();
+      }
 
       // Add new element
-      this.snake.push(nextCoordinate)
+      this.snake.push(nextCoordinate);
+
+      if (this.containsApple(nextCoordinate)) {
+        this.placeApple();
+      }
     },
-    containsSnake(x, y) {
-      return this.snake.some((coordinate) => {
-        return coordinate.x === x
-            && coordinate.y === y;
+    containsSnake(coordinate) {
+      return this.snake.some((snakeCoordinate) => {
+        return coordinate.x === snakeCoordinate.x
+            && coordinate.y === snakeCoordinate.y;
       });
+    },
+    containsApple(coordinate) {
+      if (this.apple === null) {
+        return false;
+      }
+
+      return coordinate.x === this.apple.x
+          && coordinate.y === this.apple.y;
     },
     getNextCoordinate() {
       const latestCoordinate = this.snake.slice(-1).pop();
@@ -191,6 +220,7 @@ export default {
     },
     startGame() {
       this.initSnake();
+      this.placeApple();
       this.direction = directions.RIGHT;
       this.status = gameStatus.PLAYING;
 
@@ -212,6 +242,9 @@ export default {
       this.status = gameStatus.GAME_OVER;
 
       clearInterval(this.moveIntervalId);
+    },
+    placeApple() {
+      this.apple = randomArrayElement(this.emptyCoordinates);
     },
   },
 };
