@@ -1,15 +1,14 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <SnakeWrapper />
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import SnakeWrapper from './components/SnakeWrapper.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    SnakeWrapper
   }
 }
 </script>
