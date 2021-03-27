@@ -1,25 +1,21 @@
 <template>
   <div
-    class="flex flex-col items-center"
-  >
-    <h2 class="text-3xl font-bold">Snake</h2>
-    <div
       class="relative flex flex-col border"
-    >
-      <start-overlay
+  >
+    <start-overlay
         v-if="status === gameStatus.START"
         @start-game="startGame"
-      />
-      <game-over-overlay
+    />
+    <game-over-overlay
         v-if="status === gameStatus.GAME_OVER"
         @start-game="startGame"
-      />
-      <div
+    />
+    <div
         v-for="(row, rowIndex) in grid"
         :key="rowIndex"
         class="flex flex-row"
-      >
-        <div
+    >
+      <div
           v-for="(coordinate, columnIndex) in row"
           :key="columnIndex"
           class="border min-w-20 min-h-20"
@@ -27,22 +23,21 @@
             'bg-green-600	': containsSnake(coordinate),
             'bg-red-600': containsApple(coordinate)
           }"
-        />
-      </div>
+      />
     </div>
   </div>
 </template>
 
 <script>
-import Coordinate from "@/Coordinate";
-import GameOverOverlay from "@/components/GameOverOverlay";
-import StartOverlay from "@/components/StartOverlay";
-import { arrayOfLength, randomArrayElement } from "@/helpers";
-import { directions } from "@/constants/directions";
-import { gameStatus } from "@/constants/game-status";
+import Coordinate from '@/models/Coordinate';
+import GameOverOverlay from '@/components/molecules/GameOverOverlay';
+import StartOverlay from '@/components/molecules/StartOverlay';
+import { arrayOfLength, randomArrayElement } from '@/helpers';
+import { directions } from '@/constants/directions';
+import { gameStatus } from '@/constants/game-status';
 
 export default {
-  name: 'SnakeWrapper',
+  name: 'Snake',
   components: {
     GameOverOverlay,
     StartOverlay,

@@ -1,14 +1,14 @@
 <template>
-  <SnakeWrapper />
+  <snake />
 </template>
 
 <script>
-import SnakeWrapper from '@/components/SnakeWrapper'
+import Snake from '@/components/pages/Snake'
 
 export default {
   name: 'App',
   components: {
-    SnakeWrapper
+    Snake
   }
 }
 </script>

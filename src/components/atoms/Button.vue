@@ -8,7 +8,7 @@
 
 <script>
 export default {
-  name: 'VButton',
+  name: 'Button',
   props: {
     text: {
       type: String,

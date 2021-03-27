@@ -10,12 +10,12 @@
 </template>
 
 <script>
-import VButton from "@/components/VButton";
+import Button from '@/components/atoms/Button';
 
 export default {
   name: 'StartOverlay',
   components: {
-    VButton,
+    VButton: Button,
   },
 };
 </script>

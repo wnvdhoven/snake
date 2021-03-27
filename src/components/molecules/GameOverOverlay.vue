@@ -11,12 +11,12 @@
 </template>
 
 <script>
-import VButton from "@/components/VButton";
+import Button from '@/components/atoms/Button';
 
 export default {
   name: 'GameOverOverlay',
   components: {
-    VButton,
+    VButton: Button,
   },
 };
 </script>
